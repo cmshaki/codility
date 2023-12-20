@@ -1,28 +1,32 @@
 function solution(S) {
-  // Implement your solution here
-  if (S.length == 0 || !/\[|\{|\(|\)|\}|\]/.test(S)) {
-    return 0;
-  }
-  let queue = [];
-  const charDict = {
-    "{": 1,
-    "(": 2,
-    "[": 3,
-    "}": 1,
-    ")": 2,
-    "]": 3,
-  };
-  for (i = 0; i < S.length; i++) {
-    if ("{[(".includes(S[i])) {
-      queue.push(charDict[S[i]]);
-    } else if ("]})".includes(S[i])) {
-      if (queue[queue.length - 1] == charDict[S[i]]) {
-        queue.pop();
-      } else {
+  const stack = [];
+
+  for (let i = 0; i < S.length; i++) {
+    const currentChar = S[i];
+
+    if (currentChar === "(" || currentChar === "{" || currentChar === "[") {
+      // Opening bracket, push onto the stack
+      stack.push(currentChar);
+    } else {
+      // Closing bracket
+      if (stack.length === 0) {
+        // Stack is empty, not properly nested
         return 0;
+      }
+
+      const lastBracket = stack.pop();
+
+      // Check if the current closing bracket matches the last opening bracket
+      if (
+        (currentChar === ")" && lastBracket !== "(") ||
+        (currentChar === "}" && lastBracket !== "{") ||
+        (currentChar === "]" && lastBracket !== "[")
+      ) {
+        return 0; // Not properly nested
       }
     }
   }
-  if (queue.length > 0) return 0;
-  return 1;
+
+  // After iterating through the string, check if the stack is empty
+  return stack.length === 0 ? 1 : 0;
 }
